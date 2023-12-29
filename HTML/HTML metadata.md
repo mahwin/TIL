@@ -1,7 +1,5 @@
 # HTML metadata
 
-작성일: 2023년 12월 14일 오후 10:58
-
 **Emmet을 이용하여 기본 HTML을 작성하면 다음과 같은 화면을 볼 수 있다.**
 
 - Emmet은 HTML과 CSS의 작성의 시간을 아주 빠르게 단축 시켜주는 에디터 확장기능
@@ -17,8 +15,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
   </head>
-  <body>    
-  </body>
+  <body></body>
 </html>
 ```
 
@@ -28,10 +25,10 @@
 
 ### 문자 인코딩 관련 정보
 
-`<meta charset="UTF-8" />` 
+`<meta charset="UTF-8" />`
 
 - `charset`
-    - 컴퓨터가 표현할 수 있는 문자의 집합
+  - 컴퓨터가 표현할 수 있는 문자의 집합
 - 해당 HTML 문서의 문자 인코딩을 지정하는 메타데이터
 - UTF-8 : 전세계 언어 대부분을 지원
 - EUC-KR : 영문과 한국어를 지원
@@ -39,22 +36,21 @@
 
 ### 2. 모바일, 태블릿 등의 브라우저에서 화면 뷰 관련 정보
 
-`<meta name="viewport" content="width=device-width, initial-scale=1.0" />` 
+`<meta name="viewport" content="width=device-width, initial-scale=1.0" />`
 
 - `name="viewport"`
-    - 모바일, 태블릿 등의 브라우저에서 화면을 어떻게 노출시킬 지를 알려 준다.
+  - 모바일, 태블릿 등의 브라우저에서 화면을 어떻게 노출시킬 지를 알려 준다.
 
 ### 검색엔진 최적화 관련 정보
 
 `<meta name=”description” content=”나 이렇게 좋은 웹 페이지니까 많은 사람들한테 노출해!”>`
 
 - `name=”description”`
-    - SEO에 도움을 주는 metadata
+  - SEO에 도움을 주는 metadata
 - `content=”소개하고 싶은 내용”`
-    - 크롤러에게 어떤 웹페이지로 소개하고 싶은지를 알려 주는 곳
+  - 크롤러에게 어떤 웹페이지로 소개하고 싶은지를 알려 주는 곳
 - 없다면
-    - Body 요소 내에서 의미있을 만한 것들을 긁어감.
-    
+  - Body 요소 내에서 의미있을 만한 것들을 긁어감.
 
 ### 소셜 메타데이터
 
@@ -70,11 +66,8 @@
 - 위의 내용은 Open Graph Protocol로 facebook에서 만듬.
 
 - 트위터의 경우
-    
-    `<meta name=”twitter:card” content=”summary”>` 
-    
-    [Getting started with Cards](https://developer.twitter.com/en/docs/twitter-for-websites/cards/guides/getting-started)
-    
+  `<meta name=”twitter:card” content=”summary”>`
+  [Getting started with Cards](https://developer.twitter.com/en/docs/twitter-for-websites/cards/guides/getting-started)
 
 ### 타이틀
 
@@ -97,5 +90,5 @@
 - style 태그에서 해결할 수 있는 스타일은 여기서 해결하면 성능상의 이점이 있다.
 - `<style>css 내용</style>`
 - 렌더링에 꼭 필요한 스타일만 담아두면 성능 개선에 좋다.
-    - 폰트 family
-    - layout
+  - 폰트 family
+  - layout
