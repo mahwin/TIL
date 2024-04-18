@@ -1,7 +1,5 @@
 # HTTP API를 설계해 보자
 
-작성일: 2023년 11월 2일 오후 6:25
-
 ## API 설계는 크게 두 가지로 나뉜다
 
 - POST 기반 등록 (collection)
@@ -12,11 +10,12 @@
 
 ## `회원 관리 시스템`
 
-- POST 기반 등록으로 설계
+POST 기반 등록으로 설계
+
 - 회원 목록 /members → GET
 - 회원 등록 /members → POST
 - 회원 조회 /members/{id} → GET
-- 회원 수정 /members/{id} → PATCH,PUT,POST
+- 회원 수정 /members/{id} → PATCH, PUT, POST
 - 회원 삭제 /members/{id} → DELETE
 
 `회원 목록 /members → GET`
@@ -48,8 +47,10 @@
 - 클라이언트는 등록될 리소스의 URI를 모른다.
   - 회원 등록 /members → POST
 - 서버가 새로 등록된 리소스 UR를 생성해준다.
-  - HTTP/1.1 201 Created
+  - ```text
+    HTTP/1.1 201 Created
     Location: /members/100
+    ```
 - 컬렉션(Collection)
   - 서버가 관리하는 리소스 디렉토리
   - 서버가 리소스의 URI를 생성하고 관리
@@ -57,7 +58,8 @@
 
 ## `파일 관리 시스템`
 
-- PUT 기반 등록
+PUT 기반 등록으로 설계
+
 - 파일 목록 /files → GET
 - 파일 조회 /files/{filename} → GET
 - 파일 등록 /files/{filename} → PUT
@@ -89,11 +91,11 @@
 
 ### PUT로 신규 자원 등록할 때의 특징
 
-- 클라이언트가 리소스 URI를 알고 있어야 한다.
+- `클라이언트가 리소스 URI`를 알고 있어야 한다.
 - 파일 등록 /files/{filename} → PUT
   - PUT /files/star.jpg
 - 클라이언트가 직접 리소스의 URI를 지정한다.
-- 스토어
+- 스토어(Store)
   - 클라이언트가 관리하는 리소스 저장소
   - 클라이언트가 리소스의 URI를 알고 관리
   - 여기서 스토어는 /files
@@ -103,13 +105,13 @@
 - POST
   - 서버야 이런 정보 너가 알아서 저장해주고 저장한 곳 다시 보내줘!
 - PUT
-  - 서버야 이런 정보 이런 UR에 저장해줘!
+  - 서버야 이런 정보 이런 URI에 저장해줘!
 
 ## HTML FORM 사용한 api 설계
 
-- HTML FORM은 GET, POST만 지원
-  - AJAX 같은 기술을 사용해서 해결 가능
-  - BUT 순수 HTML FORM으로 만 설계한다고 가정
+- HTML form은 GET, POST만 지원
+  - AJAX 같은 기술을 사용해서 js로도 API 콜 가능
+  - BUT 순수 HTML FORM으로만 설계한다고 가정
 - 회원 목록 /members → GET
 - 회원 등록 폼 /members/new → GET
 - 회원 등록 /members/new, /members → POST
@@ -137,7 +139,7 @@
 
 `회원 삭제   /members/{id}/delete → POST`
 
-- DELETE를 써야하지만 POST 밖에 못 쓰니 /delete라는 control URI를 사용해야 함.
+- DELETE를 써야하지만 POST 밖에 못 쓰니 /delete라는 `control URI`를 사용해야 함.
 - 방법이 없기 때문에 규칙을 어긴 것!
 
 ### control URI
@@ -161,7 +163,7 @@
 - 스토어
   - 클라이언트가 관리하는 자원 저장소
   - 클라이언트가 리소스의 URI를 생성하고 관리
-  - PUT /files
+  - PUT /files/star.jpg
 - 컨트롤러, 컨트롤 URI
   - 문서, 컬렉션, 스토어로 해결하기 어려운 추가 프로세스 실행
   - 동사를 직접 사용
