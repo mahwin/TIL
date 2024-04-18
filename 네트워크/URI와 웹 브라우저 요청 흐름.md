@@ -1,10 +1,10 @@
 # URI와 웹 브라우저 요청 흐름
 
-작성일: 2023년 10월 26일 오후 3:35
-
 ### `URI ? URL ? URN ?`
 
 ![스크린샷 2023-10-26 오후 3 05 17](https://user-images.githubusercontent.com/78193416/278303506-2c115b08-f056-4481-ac80-fc36ff32b72d.png)
+
+> URI는 로케이터(Locator), 이름(Name) 또는 둘 다 추가로 분류될 수 있다.
 
 ### `URI` Uniform Resource Identifier
 
