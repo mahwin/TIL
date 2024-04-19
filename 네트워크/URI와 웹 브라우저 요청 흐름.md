@@ -1,6 +1,6 @@
 # URI와 웹 브라우저 요청 흐름
 
-### `URI ? URL ? URN ?`
+## `URI ? URL ? URN ?`
 
 ![스크린샷 2023-10-26 오후 3 05 17](https://user-images.githubusercontent.com/78193416/278303506-2c115b08-f056-4481-ac80-fc36ff32b72d.png)
 
@@ -28,43 +28,49 @@
 
 ### `URL 분석`
 
-- URL 전체 문법
 - scheme://[userinfo@]host[:port][/path][?query][#fragment]
 - https://www.google.com:443/search?q=hello&hl=ko
-- scheme
+- `scheme`
   - 프로토콜 정보
   - 프로토콜
     - 어떤 방식으로 자원에 접근할 것인가에 대한 약속
     - http https ftp 등등
   - 특정 프로토콜인 경우 port 생략 가능.
-    - http ⇒ 80 , https ⇒ 443
-- [userinfo@]
+    - http ⇒ 80, https ⇒ 443
+- `[userinfo@]`
   - URL에 사용자정보를 포함해서 인증할 경우
   - 거의 사용하지 않음
-- [:port]
+- `host`
+  - 호스트명
+  - www.google.com
+- `[:port]`
   - 접속 포트
   - 일반적으로 생략
-- [/path]
+- `[/path]`
   - 리소스 경로, 계층적 구조
   - 예
     - /home/file1.jpg
-    - /memebers
+    - /members
     - /members/100
 - [?query]
   - key=value 형태
-  - ?로 시작, &로 추가 가능 ?keyA=valueA&keyB=valueB
+  - ?로 시작, &로 추가 가능 ?kvalueeyA=A&keyB=valueB
   - query parameter, query string 등으로 부름
   - 웹서버에 제공하는 파라미터
 - [#fragment]
   - html 내부 북마크 등에 사용
-  - 서버에 접송하는 정보는 아니다
+  - 서버에 전송하는 정보는 아니다
 
-### [https://www.google.com:443/search?q=hello&hl=ko](https://www.google.com:443/search?q=hello&hl=ko) 분석
+## `웹 브라우저의 요청 흐름`
+
+`https://www.google.com:443/search?q=hello&hl=ko`을 분석해보자
 
 - https로 port 유추
 - www.google.com으로 DNS 조회해서 IP주소를 얻는다.
 - 이를 기반으로 HTTP 요청 메시지를 생성한다
   ![스크린샷 2023-10-26 오후 3 26 01](https://user-images.githubusercontent.com/78193416/278303692-cf76f846-4636-4757-8345-08e85a99fa33.png)
+
+### HTTP 메시지 전송
 
 ![스크린샷 2023-10-26 오후 3 27 09](https://user-images.githubusercontent.com/78193416/278303751-3bd3e7df-63b4-496d-af8d-70ac35a45759.png)
 

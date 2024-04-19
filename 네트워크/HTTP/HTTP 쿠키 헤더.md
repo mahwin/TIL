@@ -44,4 +44,5 @@ Expires, max-age
   - XSS 공격 방지
   - JS로 접근 불가
 - SameSite
-  - CSRF
+  - CSRF 공격 방지
+  - 요청 도메인과 쿠키에 설정된 도메인이 같은 경우만 쿠키 전송

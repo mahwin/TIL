@@ -203,7 +203,7 @@
 
 #### `WWW-Authenticate`
 
-리소스 접근시 필요한 인증 방법 정의
+리소스 접근시 필요한 인증 방법 정의, 해당 헤더를 기준으로 인증 정보를 제대로 만들어라~!는 의미
 
 - 401 Unauthorized 응답과 함께 사용
 - WWW-Authenticate: Newauth realm="apps", type=1, title="Login to \"apps\"", Basic realm="simple"
