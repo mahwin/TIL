@@ -338,5 +338,6 @@ data-styled.g1[id="Button_ErrorButton-sc-8cb2349-0"] {
   content:"bXq0dA";
 }
 <button type='button' class="Button_ErrorButton-sc-8cb2349-0 bXq0dA">
-
 ```
+
+### \_app.tsx 응용하기

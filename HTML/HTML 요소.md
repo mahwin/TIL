@@ -1,5 +1,35 @@
 # HTML 요소
 
+HTML의 요소는 어느 요소를 어느 시점에 사용하느냐에 따라서 완전히 다른 의미를 갖는다.
+
+`나쁜 Example`
+
+```html
+<div class="section">
+  <div class="title">HTML 교육</div>
+  <div class="desc">HTML 교육을 위한 샘플 텍스트 입니다.</div>
+  <div class="date">2024-04-28</div>
+</div>
+```
+
+`좋은 Example`
+
+```html
+<section>
+  <header>
+    <h1>HTML 교육</h1>
+  </header>
+  <p>HTML 교육을 위한 샘플 텍스트 입니다.</p>
+  <footer>
+    <time datetime="2024-04-28">2024-04-28</time>
+  </footer>
+</section>
+```
+
+HTML 자체에서 의미를 가진 tag를 사용해서 시멘틱하게 작성하는 것이 중요하다.
+
+- 시멘틱 => 기계가 이해할 수 있는 태그로 문서를 작성하는 것
+
 ### HTML 요소별 카테고리
 
 - Document metadata
@@ -23,6 +53,8 @@
 
 ### Sections
 
+html 문서 내에서 body 요소 내에 유저들이 보는 컨텐츠를 넣는데, 이 컨텐츠를 어떻게 구분할 것인지에 대한 요소. 영역을 나누는 요소.
+
 - body
 - h1, h2, h3, h4, h5, h6
 - article
@@ -35,6 +67,8 @@
 - address
 
 ### Grouping content
+
+의미보다는 그룹핑할 때 사용되는 요소.
 
 - p
 - dl
@@ -65,6 +99,8 @@
 
 ## Embedded content
 
+html 문서 내에서 외부 컨텐츠를 가져올 때 사용함.
+
 - img
 - picture, source
 - video, source, track
@@ -85,6 +121,8 @@
 
 ### Forms
 
+대부분 인터렉티브 모델에 속하는 요소들
+
 - form
 - button
 - fieldset
@@ -100,65 +138,6 @@
 - details
 - summary
 - dialog
-
-### `Document metadata`
-
-- meta
-
-  - 해당 문서 혹은 애플리케이션의 metadata를 담는 요소
-
-  ```html
-  <meta charset="UTF-8" />
-  <!-- charset 문자 인코딩을 어떻게 할 것인지 결정 -->
-  <!-- 사용하고 있는 DB의 charset과 맞춰서 작업 -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- viewport 모바일 브라우저에서 화면을 어떻게 노출시킬 지 -->
-  <!-- viewport가 없으면 모바일 브라우저에서 화면 렌더링이 이상하게 동작 -->
-  <!-- 모바일 브라우저 = 태블릿 PC 포함 -->
-  <meta name="description" content="우리는 이런 서비스를 제공해요" />
-  <!-- description이 없다면 SEO가 body 안의 내용을 긁어감 -->
-
-  <!-- Social Metadata: Facebook - Open Graph -->
-  <!-- Sharing Debugger: https://developers.facebook.com/tools/debug -->
-  <meta property="og:title" content="우리는 이런 사이트예요" />
-  <meta property="og:description" content="우리는 이런 서비스를 제공해요" />
-  <meta property="og:url" content="url path" />
-  <meta property="og:image" content="img path" />
-
-  <!-- Social Metadata: Twitter - Twitter Card -->
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:site" content="@트위터 아이디" />
-  <meta name="twitter:title" content="우리는 이런 사이트예요" />
-  <meta name="twitter:description" content="우리는 이런 서비스를 제공해요" />
-  <meta name="twitter:url" content="url path" />
-  <meta name="twitter:image" content="img path" />
-  ```
-
-- title
-  - 해당 어플리케이션의 제목을 담는 요소
-  ```html
-  <title>해당 어플리케이션의 제목</title>
-  ```
-- link
-  - 외부 문서 혹은 외부 콘텐츠와 이 콘텐츠를 연결해주는 요소
-  ```html
-  <link rel="stylesheet" href="./style.css" />
-  ```
-- style
-
-  - 페이지 내에서 사용하는 CSS를 정의하는 요소
-
-  ```html
-  <!-- link로 연결한 css는 HTTP Request를 일으킬 가능성이 있다 -->
-  <!-- 이는 성능 저하를 일으킬 여지가 있다 -->
-  <!-- style 요소 내부에 렌더링에 꼭 필요한 스타일만 담아두면 성능 개선에 좋다 -->
-
-  <style>
-    body {
-      ...;
-    }
-  </style>
-  ```
 
 ### `Sections`
 
