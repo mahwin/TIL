@@ -3,7 +3,7 @@
 ## HTML Validator
 
 - 작성한 HTML을 올바르게 작성했는 지 체크하고 싶을 때 도움을 주는 사이트
-- https://validator.w3.org/nu/
+- https://validator.w3.org/nu
 
 ## Can I Use
 
@@ -16,7 +16,7 @@
 - Mozilla에서 운영하는 기술 문서
 - Chrome, Edge, Firefox 등 모든 브라우저 벤더들이 오픈소스로 참여
 - HTML, CSS, JavaScript 관련 기술을 가장 정확하게 제공하는 사이트
-- https://developer.mozilla.org/
+- https://developer.mozilla.org
 
 ## CSS-Tricks
 
