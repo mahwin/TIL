@@ -23,17 +23,19 @@ map((item) => item.name, products);
 ## map 함수는 이터러블 프로토콜을 따르기 때문에 다형성을 가진다.
 
 ```javascript
-document.querySelectorAll("*").map((node) => node.nodeName); // map 함수가 없다고 나옴.
+document.querySelectorAll("*").map((node) => node.nodeName); // Error
 ```
 
-- 이유는 querySelectorAll이 이터러블 프로토콜을 따르지 않기 때문이다.
-- Array를 상속 받은 객체가 아니라 프로토타입에 map 함수가 없기 대문.
+- map 함수가 없다고 나옴.
+- 이유는 querySelectorAll의 리턴 값이 Array를 상속 받은 객체가 아니라서 프로토타입에 map 함수가 없기 대문.
+- `[...document.querySelectorAll("*")].map((node)=>node.nodeName);` 이렇게 사용하면 된다ß
 
 ```javascript
-map((el) => el.nodeName, doucment.querySelectorAll("*")); // 이렇게 사용하면 된다.
+map((el) => el.nodeName, doucment.querySelectorAll("*"));
 ```
 
-우리는 모든 값들을 제네레이터를 이용해 이터러블 프로토콜을 따르게 만들어 수 있다. 또, 이터러블 프로토콜을 따르면 map 함수를 사용할 수 있기 때문에 자바스크립트의 모든 값들을 map 함수에서 사용할 수 있다.
+- map 함수는 이터러블을 받기 때문에 이터러블 프로토콜을 따르는 여러 값들에 사용할 수 있다.
+- 따르지 않더라도 제네레이터를 사용한다던지 하면 자바스크립트의 모든 값들을 순회할 수 있다.
 
 ## filter
 
