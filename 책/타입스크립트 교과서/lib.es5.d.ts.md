@@ -1,8 +1,10 @@
-### 3.0.0 `lib.es5.d.ts 분석하기`
+## 3.0.0 `lib.es5.d.ts 분석하기`
 
-- Array<string> 라는 타입은 실제로 lib.es5.d.ts와 같은 파일에 타이핑이 되어 있다.
+lib.es5.d.ts에는 타입스크립트에서 기본적으로 제공하는 타입 선언이 모여 있다.
 
-```
+내장 Array 타입을 확인해보자
+
+```tsx
 interface Array<T> {
 	find<S extends T>(predicate: (value: T, index: number, obj: T[]) => value is S, thisArg?: any): S | undefined;
   find(predicate: (value: T, index: number, obj: T[]) => unknown, thisArg?: any): T | undefined;
@@ -10,259 +12,282 @@ interface Array<T> {
 }
 ```
 
-- js는 배열의 속성도 버전에 따라 달라지기 때문에 배열을 타이핑할 때 사용하는 Array도 js 버전에 맞추고자 lib.es2015.iterable.d.ts 등의 파일에도 배열 타입이 선언되어 있다.
-- 확장자 명이 ts가 아니고 d.ts인 이유는 구현부는 없고 타입 선언만 존재하기 때문이다.
+js는 배열의 속성도 버전에 따라 달라지기 때문에 배열을 타이핑할 때 사용하는 Array도 js 버전에 맞추고자 lib.es2015.iterable.d.ts 등의 파일에도 배열 타입이 선언되어 있다.
 
-### 3.1 `매핑된 객체 타입에 사용하는 Utility Types`
+확장자 명이 ts가 아니고 `d.ts인 이유는 구현부는 없고 타입 선언`만 존재하기 때문이다.
 
-- Partial
+### 3.1 `Partial, Required, Readonly, Pick, Record`
 
-  - 기존 객체의 속성을 전부 옵셔널로 만드는 함수
+Partial, Required, Readonly, Pick, Record는 타입스크립트 공식 사이트의 Reference 중 Utility Types에서 매핑된 객체 타입을 사용하는 것만 추린 것이다.
 
-  ```tsx
-  type MyPartial<T> = {
-    [P in keyof T]?: T[P];
-  };
+`Partial`
 
-  type Result = MyPartial<{ a: string; b: number }>;
-  ```
+기존 객체의 속성을 전부 옵셔널로 만드는 함수
 
-- Required
+```tsx
+type MyPartial<T> = {
+  [P in keyof T]?: T[P];
+};
 
-  - Partial과 반대로 모든 속성을 required로 만듬
-  - 옵셔널 속성을 requried로
+type Result = MyPartial<{ a: string; b: number }>;
+```
 
-  ```tsx
-  type MyRequired<T> = {
-    [P in keyof T]-?: T[P];
-  };
-  ```
+`Required`
 
-  - 옵셔널 속성을 제거하기
+- Partial과 반대로 모든 속성을 required로 만듬
+- 옵셔널 속성을 requried로
 
-  ```tsx
-  type T = {
-      a: string
-      b?: string
-  }
+```tsx
+type MyRequired<T> = {
+  [P in keyof T]-?: T[P];
+};
+```
 
-  const 그대로: { [K in keyof T]: string } = {
-      a: 'asdf', // a is required
-  }
+- 옵셔널 속성을 제거하기
 
-  const 옵셔널적용 { [K in keyof T]?: string } = {
-  }
+```tsx
+type T = {
+  a: string;
+  b?: string;
+};
 
-  const 마이너스물음표연산자추가: { [K in keyof T]-?: string } = {
-      a: '필수야',
-      b: '필수야'
-  }
-  ```
+const 그대로: { [K in keyof T]: string } = {
+  a: "asdf", // a is required
+};
 
-- Readeonly 속성을 requried로
-  ```tsx
-  type MyReadonly<T> = {
-    readonly [P in keyof T]: T[P];
-  };
-  ```
-- Readeonly 속성을 끄기
-  ```tsx
-  type MyReadonly<T> = {
-    -readonly [P in keyof T]: T[P];
-  };
-  ```
-- Pick 특정 속성만 뽑아내기
-  - K 로 넣어주는 타입이 꼭 T의 속성이여야 함
-  ```tsx
-  type MyPick<T, K extends keyof T> = {
-    [P in K]: T[P];
-  };
-  ```
-  - K extends keyof T
-    - T의 객체 속성 중에 K에 포함되는 것
-  - K로 넣어주는 타입이 꼭 T의 속성일 필요 없는 타입
-  ```tsx
-  type MyPickUpgrade<T, K> = {
-    [P in K extends keyof T ? K : never]: T[P];
-  };
-  ```
-  - 한 번 걸러 줘야겠다고 생각했는데 never를 반환해서 해결해야겠단 생각은 못함..
-  - K extends keyof T ? K : never
-    - K가 유니온 타입이라면 분배법칙이 일어나고 T의 프로펄티 속성과
-      - 일치하면
-      - [P in K]:T[P]
-      - 불일치하면
-      - [P in never] 가 되어서 의미 없어짐
-  - K에 T에 해당하는 속성이 하나라도 없는 경우에 {} 타입이 리턴된다.
-- Record
+const 옵셔널적용: { [K in keyof T]?: string } = {};
 
-  - 모든 속성이 일치하는 객체 만들기
+const 마이너스물음표연산자추가: { [K in keyof T]-?: string } = {
+  a: "필수야",
+  b: "필수야",
+};
+```
 
-  ```tsx
-  type InCorrect<K extends keyof unknown, T> = {
-    [P in K]: T;
-  };
+Readeonly 속성을 requried로
 
-  type Correct<K extends keyof any, T> = {
-    [P in K]: T;
-  };
-  ```
+```tsx
+type MyReadonly<T> = {
+  readonly [P in keyof T]: T[P];
+};
+```
 
-  - **`keyof unknown`**는 모든 가능한 프로퍼티 키의 집합을 나타내지 않고, 오히려 런타임에 무엇이든 될 수 있는 불확실한 상태를 나타내는 타입임. 그래서 ts 컴파일러는 알지 못 해서 쓸모 없어짐.
-  - keyof는 객체 타입의 프로퍼티 키(key)를 추출하는 데 사용되고 keyof any를 하면 모든 객체 타입의 key이기 때문에 string | number | symblo이 된다!
+Readeonly 속성을 끄기
+
+```tsx
+type MyReadonly<T> = {
+  -readonly [P in keyof T]: T[P];
+};
+```
+
+`Pick`
+
+특정 속성만 뽑아내기
+
+- K 로 넣어주는 타입이 꼭 T의 속성이여야 함
+
+```tsx
+type MyPick<T, K extends keyof T> = {
+  [P in K]: T[P];
+};
+```
+
+- K extends keyof T
+  - T의 객체 속성 중에 K에 포함되는 것
+
+K로 넣어주는 타입이 꼭 T의 속성일 필요는 없는 타입
+
+```tsx
+type MyPickUpgrade<T, K> = {
+  [P in K extends keyof T ? K : never]: T[P];
+};
+```
+
+- K extends keyof T ? K : never
+  - K가 유니온 타입이라면 분배법칙이 일어나고 T의 프로펄티 속성과
+    - 일치하면
+    - [P in K]:T[P]
+    - 불일치하면
+    - [P in never] 가 되어서 의미 없어짐
+- K에 T에 해당하는 속성이 하나라도 없는 경우에 {} 타입이 리턴된다.
+
+`Record`
+
+모든 속성이 일치하는 객체 만들기
+
+```tsx
+type InCorrect<K extends keyof unknown, T> = {
+  [P in K]: T;
+};
+
+type Correct<K extends keyof any, T> = {
+  [P in K]: T;
+};
+```
+
+- **`keyof unknown`**는 모든 가능한 프로퍼티 키의 집합을 나타내지 않고, 오히려 런타임에 무엇이든 될 수 있는 불확실한 상태를 나타내는 타입임. 그래서 ts 컴파일러는 알지 못 해서 쓸모 없어짐.
+- keyof는 객체 타입의 프로퍼티 키(key)를 추출하는 데 사용되고 keyof any를 하면 모든 객체 타입의 key이기 때문에 string | number | symblo이 된다!
 
 ### 3.2 Exclude, Extract, Omit, NonNullable
 
-- Exclude 타입
-  - 특정 타입에서 지정한 타입을 제거하는 타입
-  ```tsx
-  type Exclude<T, U> = T extends U ? never : T;
-  ```
-- Extract 타입
-  - 특정 타입에서 지정한 타입만 추출하는 타입
-  ```tsx
-  type Extract<T, U> = T extends U ? T : never;
-  ```
-- Omit 타입
+분배법칙을 활용하는 타입들
 
-  - 특정 객체에서 지정한 속성을 제거하는 타입
-  - Pick 타입과 Exclude 타입을 조합해서 구현한다
+`Exclude`
 
-  ```tsx
-  type MyPick<T, K extends keyof T> = {
-    [P in K]: T[P];
-  };
+- 특정 타입에서 지정한 타입을 제거하는 타입
 
-  type MyExclude<T, U> = T extends U ? T : never;
+```tsx
+type Exclude<T, U> = T extends U ? never : T;
+```
 
-  type MyOmit<O, K extends keyof any> = MyPick<O, MyExclude<keyof O, K>>;
-  ```
+`Extract`
 
-  - exclude로 객체 타입의 프로퍼티 중엔 K에 속하는 속성만 빼내고 Pick 타입으로 선택함.
+- 특정 타입에서 지정한 타입만 추출하는 타입
 
-- MyNonNullable 타입
+```tsx
+type Extract<T, U> = T extends U ? T : never;
+```
 
-  - null과 undefined를 제거하는 타입
+`Omit`
 
-  ```tsx
-  type MyNonNullable1<T> = T extends null | undefined ? never : T;
+- 특정 객체에서 지정한 속성을 제거하는 타입
+- Pick 타입과 Exclude 타입을 조합해서 구현한다
 
-  type MyExclude<T,U> =  T extends U ?  T: never;
-  type MyNonNullable2<T> = MyExclude<MyExclude<T,null>,undefined>
+```tsx
+type MyPick<T, K extends keyof T> = {
+  [P in K]: T[P];
+};
 
-  ⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️
-  type MyNonNullable3<T> = T & {};
-  ⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️
-  ```
+type MyExclude<T, U> = T extends U ? T : never;
 
-  - { } 객체는 null, undefined 빼고 다!
+type MyOmit<O, K extends keyof any> = MyPick<O, MyExclude<keyof O, K>>;
+```
 
-- PickAndOptional 타입
-  ```tsx
-  type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-  ```
-  - optional하게 할 속성을 제거한 객체 & optional하게 할 속성만 남기고 optional하게 한 객체
-  - <{’req’:123,’optional’:123 } ,’optional’>
-  - ’req’:123 & ’optional’? :123 ⇒ 원하는 값.
+- exclude로 객체 타입의 프로퍼티 중엔 K에 속하는 속성만 빼내고 Pick 타입으로 선택함.
+
+`NonNullable`
+
+- null과 undefined를 제거하는 타입
+
+```tsx
+type MyNonNullable1<T> = T extends null | undefined ? never : T;
+
+type MyExclude<T,U> =  T extends U ?  T: never;
+type MyNonNullable2<T> = MyExclude<MyExclude<T,null>,undefined>
+
+⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️
+type MyNonNullable3<T> = T & {};
+⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️
+```
+
+- { } 객체는 null, undefined 빼고 다!
+
+`Optional`
+
+일부 속성만 옵셔널하게 만드는 코드
+
+```tsx
+type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+```
+
+- optional하게 할 속성을 제거한 객체 & optional하게 할 속성만 남기고 optional하게 한 객체
+- <{’req’:123,’optional’:123 } ,’optional’>
+- ’req’:123 & ’optional’? :123 ⇒ 원하는 값.
 
 ### 3.3 `Parameters, ConstructorParameters, ReturnType, InstanceType`
 
-- infer를 이용한 utils 타입
+infer를 이용한 Utility Types들
 
-  ```tsx
-  type MyParams <T extends (...args:any) => any>
-  = T extends (...args: infer P) => any ? P : never;
+```tsx
+type MyParams <T extends (...args:any) => any>
+= T extends (...args: infer P) => any ? P : never;
 
-  type MyConParms<T extends abstract new (...args:any) => any> any>
-  = T extends abstract new (...args: infer P) => any ? P : never;
+type MyConParms<T extends abstract new (...args:any) => any> any>
+= T extends abstract new (...args: infer P) => any ? P : never;
 
-  type MyReturn<T extends (...args:any) => any>
-  = T extends abstract (...args:any)=> infer R ? R :any;
+type MyReturn<T extends (...args:any) => any>
+= T extends  (...args:any)=> infer R ? R :any;
 
-  type MyInstanceReturn<T extends abstract new (...args:any) => any> any>
-  = T extends abstract new (...args: any) => infer R ? R : any
-  ```
+type MyInstanceReturn<T extends abstract new (...args:any) => any>
+= T extends abstract new (...args: any) => infer R ? R : any
+```
 
-  - (...args:any) => any 모든 종류의 함수
-  - abstract new (...args:any) => any 모든 종류의 생성자 함수
+- (...args:any) => any 모든 종류의 함수
+- abstract new (...args:any) => any 모든 종류의 생성자 함수
 
 ### 3.4 `ThisType`
 
-- 메서드들에 this를 주입하는 타입
+메서드들에 this를 한 방에 주입하는타입
 
-  ```tsx
-  type Coin = { name: string; amount: number };
+```tsx
+type Coin = { name: string; amount: number };
 
-  type Methods = {
-    addCoin(this: Coin & Methods): void;
-    minusCoin(this: Coin & Methods): void;
-  };
+type Methods = {
+  addCoin(this: Coin & Methods): void;
+  minusCoin(this: Coin & Methods): void;
+};
 
-  type CoinWallet = {
-    coin: Coin;
-    methods: Methods;
-  };
+type CoinWallet = {
+  coin: Coin;
+  methods: Methods;
+};
 
-  const coinWallet: CoinWallet = {
-    coin: {
-      name: "bitcoin",
-      amount: 3,
+const coinWallet: CoinWallet = {
+  coin: {
+    name: "bitcoin",
+    amount: 3,
+  },
+  methods: {
+    addCoin() {
+      this.amount++;
     },
-    methods: {
-      addCoin() {
-        this.amount++;
-      },
-      minusCoin() {
-        this.amount--;
-      },
+    minusCoin() {
+      this.amount--;
     },
-  };
-  ```
+  },
+};
+```
 
-  - this.coin.amount로 접근하는 게 아니라 this에 타이핑을 Coin & Mehtods로 했기 때문에 this.amount로 속성에 접근, this.addCoin로 접근 가능하다.
-  - methods가 늘어난다면 this 타이핑하는 부분이 늘어날텐데 ThisType으로 해결 가능하다.
+- this.coin.amount로 접근하는 게 아니라 this에 타이핑을 Coin & Mehtods로 했기 때문에 this.amount로 속성에 접근, this.addCoin로 접근 가능하다.
+- methods가 늘어난다면 this 타이핑하는 부분이 늘어날텐데 ThisType으로 해결 가능하다.
 
-  ```tsx
-  type Coin = { name: string; amount: number };
-  type Methods = {
-    addCoin(): void;
-    minusCoin(): void;
-  };
-  type CoinWallet = {
-    coin: Coin;
-    methods: Methods & ThisType<Coin & Methods>;
-  };
+```tsx
+type Coin = { name: string; amount: number };
+type Methods = {
+  addCoin(): void;
+  minusCoin(): void;
+};
+type CoinWallet = {
+  coin: Coin;
+  methods: Methods & ThisType<Coin & Methods>;
+};
 
-  const coinWallet: CoinWallet = {
-    coin: {
-      name: "bitcoin",
-      amount: 3,
+const coinWallet: CoinWallet = {
+  coin: {
+    name: "bitcoin",
+    amount: 3,
+  },
+  methods: {
+    addCoin() {
+      this.amount++;
     },
-    methods: {
-      addCoin() {
-        this.amount++;
-      },
-      minusCoin() {
-        this.amount--;
-      },
+    minusCoin() {
+      this.amount--;
     },
-  };
-  ```
-
-  - ThisType은 intrinsic으로 내부 구현이 특별하게 처리되어 있다.
-  - **`intrinsic`**은 개발자가 직접 정의하거나 조작할 수 없는 내장 타입을 의미합니다. 이러한 내장 타입은 TypeScript 언어 자체에 내장되어 있으며, 개발자가 아니라 언어 자체에서 제어하고 관리됩니다. **`intrinsic`**은 주로 내장 타입과 관련된 일부 타입 정의에서 사용됩니다.
+  },
+};
+```
 
 ### 3.5 `forEach 만들기`
 
-- myForEach를 만들어서 사용하자
+myForEach를 만들어서 사용하자. lib.es5.d.ts에는 Array를 인터페이스로 만들어두었기 때문에 Array에 메소드를 추가할 수 있다.
 
-  ```tsx
-  interface Array<T> {
-  	myForEach(cb:()=>void):void)
-  }
+```tsx
+interface Array<T> {
+	myForEach(cb:()=>void):void)
+}
 
-  [1,2,3].myForEach(()=>{});
-  ```
+[1,2,3].myForEach(()=>{});
+```
 
 - forEach에 들어가는 인수 ( element, index,origin)
   ```tsx
@@ -300,7 +325,7 @@ interface Array<T> {
 ### 3.6 `map 만들기`
 
 - 100% 정확하게 타이핑하는 것은 매우 어려운 일이다.
-- 적당히 쓸 만하게 타이핑하는 것이 중요하다
+- `적당히 쓸 만하게 타이핑하는 것`이 중요하다
 
 - forEach vs map의 차이
   - map은 같은 length를 가진 배열을 반환한다는 것.
@@ -364,13 +389,14 @@ interface Array<T> {
 - 🔥 Signature '(el: number): boolean' must be a type predicate.
 - 콜백 함수가 타입 서술함수가 아니라는 에러가 발생함.
 - 타입 서술 함수를 사용해도 에러가 발생하는 경우
+
   - 자바스크립트 코드를 그대로 사용할 수 없고 타입스크립트를 위해 변경해서 사용해야함.
   - 타입 서술 함수는 꼭 boolean을 반환해야 함.
+
   ```tsx
   [1, 2, 3].myFilter((v, i, a): v is never => {}); // XX
   [1, 2, 3].myFilter((v, i, a): v is never => false); // OO
-  ```
-  ```tsx
+
   [{ num: 1 }, { num: 2 }, { num: 3 }].filter(function (
     v
   ): v is { num: number } {
@@ -382,6 +408,7 @@ interface Array<T> {
     return (v.num % 2) % 2 === 1;
   });
   ```
+
 - 꼭 타입 서술 함수가 필요한 대상에만 서술 함수로 타이핑할 수 있을까?
 
   - 오버로딩 전
@@ -440,9 +467,9 @@ interface Array<T> {
 ### 3.10 Promise, Awaited 타입 분석
 
 ```tsx
-(async()=>{
+(async() => {
     const a = await Promise.resolve('123') // string
-		const pAll = await Promise.all(['string',Promise.resolve(123)]// string|number
+		const pAll = await Promise.all(['string',Promise.resolve(123)])// string|number
 })()
 
 (async()=>{
