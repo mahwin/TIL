@@ -20,15 +20,15 @@ const map = (f, iter) => {
 map((item) => item.name, products);
 ```
 
-## map 함수는 이터러블 프로토콜을 따르기 때문에 다형성을 가진다.
+### map 함수는 이터러블 프로토콜을 따르기 때문에 다형성이 높다.
 
 ```javascript
 document.querySelectorAll("*").map((node) => node.nodeName); // Error
 ```
 
 - map 함수가 없다고 나옴.
-- 이유는 querySelectorAll의 리턴 값이 Array를 상속 받은 객체가 아니라서 프로토타입에 map 함수가 없기 대문.
-- `[...document.querySelectorAll("*")].map((node)=>node.nodeName);` 이렇게 사용하면 된다ß
+- 이유는 querySelectorAll의 리턴 값이 Array를 상속 받은 객체가 아니라서 프로토타입에 map 함수가 없기 때문이다.
+- `[...document.querySelectorAll("*")].map((node)=>node.nodeName);` 이렇게 사용하면 Array 객체로 변환되어 map 함수를 사용할 수 있다.
 
 ```javascript
 map((el) => el.nodeName, doucment.querySelectorAll("*"));
