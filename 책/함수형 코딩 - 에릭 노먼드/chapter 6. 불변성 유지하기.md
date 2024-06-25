@@ -1,6 +1,22 @@
 ## 모든 동작을 불변형으로 만들 수 있을까
 
-특히 중첩된 데이터를 불변 동작으로 구현할 수 있을지를 생각해보자.
+제품 추가하는 로직에 대해서 카피-온-라이트 원칙을 적용하여 불변형을 적용했다. 장바구니와 관련된 모든 로직에 대해 불변형을 적용할 수 있을까?
+
+장바구니에 대한 동작
+
+1. 제품 개수 가져오기
+2. 제품 일므으로 제품 가져오기
+3. 제품 추가하기
+4. 제품 이름으로 제품 빼기
+5. 제품 이름으로 제품 구매 수량 바꾸기
+
+제품에 대한 동작
+
+1. 가격 설정하기
+2. 가격 가져오기
+3. 이름 가져오기
+
+특히 `중첩된 데이터`를 불변 동작으로 구현할 수 있을지를 생각해보자.
 
 동작은 읽기 또는 쓰기로 분류할 수 있다. 읽기 동작은 데이터를 바꾸지 않고 정보를 꺼내는 것이다.
 쓰기 동작은 어떻게든 데이터를 바꾼다. 바뀌는 값은 어디서 사용될지 모르기 때문에 바뀌지 않도록 원칙이 필요하다.
@@ -23,6 +39,42 @@
 2. 가격 가져오기 R
 3. 이름 가져오기 R
 
+## 카피-온-라이트 원칙 세 단계
+
+카피-온-라이트는 세 단계로 되어 있다. 각 단계를 구현하면 불변성을 유지하면서 값을 바꿀 수 있다.
+
+1. 복사본 만들기
+2. 복사본 변경하기
+3. 복사본 리턴하기
+
+```javascript
+function add_element_last(array, elem) {
+  const new_array = array.slice();
+  new_array.push(elem);
+  return new_array;
+}
+```
+
+위 함수는 기본 배열을 변경하지 않고, 정보를 리턴했기 때문에 읽기이다. `카피-온-라이트`는 쓰기 함수를 읽기로 바꾼다.
+
+장바구에서 제품을 빼는 함수를 통해 더 자세히 알아보자
+
+```javascript
+function remove_item_by_name(cart, name) {
+  const new_cart = cart.slice();
+  let idx = null;
+  for (let i = 0; i < new_cart.length; i++) {
+    if (new_cart[i].name === name) {
+      idx = i;
+    }
+    if (idx === null) {
+      new_cart.splice(idx, 1);
+      return new_cart;
+    }
+  }
+}
+```
+
 ## 쓰면서 읽기도 하는 함수 분리하기
 
 쓰면서 읽기도 하는 함수를 분리하는 작업은 두 단계로 나눌 수 있다. 먼저 쓰기에서 읽기를 분리하고 쓰기에 카피-온-라이트를 적용해 읽기도 바꾼다.
@@ -38,6 +90,15 @@ function drop_first(array) {
   const copy = array.slice();
   copy.shift();
   return copy;
+}
+
+function shift(array) {
+  const array_copy = array.slice();
+  const first = array_copy.shift();
+  return {
+    first,
+    rest: array_copy,
+  };
 }
 ```
 
@@ -76,3 +137,24 @@ slice로 복사하는 경우 얕은 복사를 진행한다. 얕은 복사는 같
 자바스크립트는 객체도 쉽게 복사본을 만들 수 있는 메서드를 제공한다.
 
 Object.assign({},originObj)를 사용하자.
+
+```javascript
+function objectSet(object, key, value) {
+  const copy = Object.assign({}, object);
+  copy[key] = value;
+  return copy;
+}
+
+function objectDelete(object, key) {
+  const copy = Object.assign({}, object);
+  delete copy[key];
+  return copy;
+}
+```
+
+## 정리
+
+- 함수형 프로그래밍에서 불변 데이터가 필요하다. 계산에서는 변경 가능한 데이터에 쓰기를 할 수 없다.
+- 카피-온-라이트는 데이터를 불변형으로 유지할 수 있는 원칙이다. 복사본을 만들고 원본 대신 복사본을 변경하는 것을 말한다.
+- 카피-온-라이트는 값을 변경하기 전에 얕은 복사를 한다.
+- 보일러 플레이트 코드를 줄이기 위해 기본적인 배열과 객체 동작에 대한 카피-온-라이트 버전을 만들어 두는 것이 좋다.
