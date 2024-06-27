@@ -84,6 +84,12 @@ function pluck(array, field) {
     return item[field];
   });
 }
+
+function invokeMap(array, method) {
+  return map(array, function (obj) {
+    return obj[method]();
+  });
+}
 ```
 
 #### concat, concatMap
@@ -99,6 +105,10 @@ function concat(array) {
     });
   });
   return result;
+}
+
+function concatMap(array, f) {
+  return concat(map(array, f));
 }
 ```
 
@@ -119,9 +129,7 @@ function frequenciesBy(array, func) {
   });
   return result;
 }
-```
 
-```javascript
 function groupBy(array, f) {
   const result = {};
   forEach(array, function (item) {
@@ -134,3 +142,98 @@ function groupBy(array, f) {
   });
 }
 ```
+
+### 값을 만들기 위한 reduce()
+
+장바구니 객체를 잃어버렸지만 제품을 모두 배열로 로깅하고 있다는 상황에서 제품 배열로 장바구니 객체를 만들어보자
+
+```javascript
+const itemsAdded = ['shirt','shoes','shirt','socks',...];
+
+const shoppingCart = itemsAdded.reduce((cart, item) => {
+  if(!cart[item]){
+    return add_item(cart, {name:item, count:1, price: priceLookup(item)});
+  } else {
+    const quantity = cart[item].count;
+    return setFieldByName(cart, item,'quantity', quantity + 1);
+    }
+  },{})
+```
+
+### 데이터를 사용해 창의적으로 만들기
+
+위의 코드는 삭제하는 경우를 처리하지 않았다. 삭제도 포함해서 로깅해보자.
+
+```javascript
+const itemOps = [
+  ["add", "shirt"],
+  ["add", "shoes"],
+  ["add", "shirt"],
+  ["add", "socks"],
+  ["remove", "shirt"],
+  ["add", "shoes"],
+];
+
+function addOne(cart, item) {
+  if (!cart[item]) {
+    return add_item(cart, { name: item, count: 1, price: priceLookup(item) });
+  } else {
+    const quantity = cart[item].count;
+    return setFieldByName(cart, item, "quantity", quantity + 1);
+  }
+}
+
+function removeOne(cart, item) {
+  if (!cart[item]) return cart;
+  else {
+    const quantity = cart[item].count;
+    if (quantity === 1) {
+      return remove_item(cart, item);
+    } else {
+      return setFieldByName(cart, item, "quantity", quantity - 1);
+    }
+  }
+}
+
+const shoppingCart = itemOps.reduce((cart, [op, item]) => {
+  if (op === "add") return addOne(cart, item);
+  if (op === "remove") return removeOne(cart, item);
+}, {});
+```
+
+### 연습 문제 1.
+
+소프트볼 토너먼트가 있다. 최종 명단에는 postion과 score가 가장 높은 선수의 이름이 포함된 객체가 필요하다.
+evalutions 배열은 score를 기준으로 정렬되어 있다.
+
+```javascript
+const evalutions = [
+  { name: "Jane", position: "catcher", score: 25 },
+  { name: "Harry", position: "shortstop", score: 25 }
+  { name: "John", position: "shortstop", score: 10 },
+  { name: "kkk", position: "catcher", score: 17 }
+];
+
+const roster = {
+  pitcher:"John",
+  ...
+}
+```
+
+```javascript
+const roster = evalutions.reduce((acc, { name, position, score }) => {
+  if (!acc[position]) {
+    acc[position] = name;
+  }
+}, {});
+```
+
+### 메서드 연산자로 정렬하기
+
+점 연산자를 사용해서 수직으로 정렬된 라인은 보기에 좋다. 또, 가장 위로 데이터가 들어와 가장 아래로 나가는 파이프라인으로 읽을 수도 있기에 함수형 프로그래밍에 적합하다.
+
+### 정리
+
+- 함수형 도구는 여러 단계의 체인으로 조합할 수 있다.
+- 한수형 도구를 체인으로 조합하는 것은 SQL 같은 쿼리 언어로 볼 수 있다.
+- 종종 체인의 다음 단계를 위해 새로운 데이터를 만들거나 기존 데이터를 인자로 사용해야 할 수도 있다.
