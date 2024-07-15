@@ -2,6 +2,39 @@
 
 타임라인이 함께 협력해야 하는 경우가 있다. 타임라인을 조율하고 잘못된 실행 순서를 없애기 위한 동시성 기본형을 만들어 보자
 
+## 최적화하는 과정에서 생긴 에러
+
+최적화하는 과정에서 에러가 발생했다. 가끔 에러가 발생하는데, 이는 타이밍 문제 때문이다.
+
+```js
+// 최적화 전 코드
+cost_ajax(cart, (cost) => {
+  total += cost;
+  shipping_ajax(cart, (shipping) => {
+    total += shipping;
+    callback(total);
+  });
+});
+
+// 최적화 후 코드
+cost_ajax(cart, (cost) => {
+  total += cost;
+});
+
+shipping_ajax(cart, (shipping) => {
+  total += shipping;
+  callback(total);
+});
+```
+
+=> 문제가 생기는 지점은 shipping_ajax가 DOM을 업데이트 하고 있는데 cost_ajax가 끝나기 전에 실행되기 때문이다.
+
+![스크린샷 2024-07-15 오후 2 57 05](https://gist.github.com/user-attachments/assets/9a369af4-688c-4b7b-90fb-580d3d8900fc)
+
+위의 이미지를 보면 cost_ajax가 항상 shipping_ajax 전에 실행된다고 보장할 수 없다.
+
+ajax 응답을 모두 기다렸다가 DOM을 업데이트하는 쪽으로 개선하자.
+
 ## 타임라인을 나누기 위한 동시성 기본형
 
 여러 타임라인이 다른 시간에 종료되어도 서로 기다릴 수 있는 간단하고 재사용 가능한 기본형이 필요하다. 만약 그런 것이 있다면 여러 타임라인이 실행되는 순서를 신경 쓰지 않아도 되고 타임라인이 모두 끝나는 것도 쉽게 처리할 수 있다. 결국 경쟁 조건을 막을 수 있다.
@@ -46,6 +79,10 @@ Cut 동시성을 장바구니에 제품을 추가하는 코드에 적용해 보�
 calc_cart_total() 에는 total 값 계산이 끝났을 때 부르는 콜백이 이미 있다. 따라서 cut() 콜백에서 calc_cart_total() 콜백을 실행하자.
 
 ![스크린샷 2024-07-14 오후 8 42 28](https://gist.github.com/user-attachments/assets/16eb172d-1c40-4dc5-a3a0-0f5b056716d7)
+
+=> Promise.all을 사용하는 게 낫지않을까..?
+=> 어떻게 보면 Promise.all보다 나은 점도 있음.
+=> Promise.all의 일부가 실패하면 나머지도 실패하게 되지만, Cut()은 실패한 부분에 대해서만 실패하게 할 수 있고, 이를 기반하여 재호출하게 할 수 있다.
 
 ## 불확실한 순서 분석하기
 
@@ -105,6 +142,8 @@ function JustOnce(action) {
 
 `동시성 기본형으로 조율하자`
 타임라인을 조율하기 위해 Promise나 컷과 같은 것으로 액션에 순서나 반복을 제한하자.
+
+![스크린샷 2024-07-15 오후 3 20 58](https://gist.github.com/user-attachments/assets/5d23a6cb-de40-4cc8-a41d-1075cfa6bfd0)
 
 ## 요점 정리
 
